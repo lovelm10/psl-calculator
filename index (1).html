@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSL Rating System</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --text-color: #c9d1d9;
+            --accent-color: #2ea44f;
+            --border-color: #30363d;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 24px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            text-align: center;
+            color: #fff;
+        }
+        p.subtitle {
+            text-align: center;
+            color: #8b949e;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-color);
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        select:focus, input:focus {
+            outline: none;
+            border-color: #58a6ff;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #2c974b;
+        }
+        .result-box {
+            margin-top: 24px;
+            padding: 16px;
+            border-radius: 6px;
+            background-color: rgba(56, 139, 253, 0.1);
+            border: 1px solid rgba(56, 139, 253, 0.4);
+            display: none;
+            text-align: center;
+        }
+        .score {
+            font-size: 32px;
+            font-weight: 800;
+            color: #58a6ff;
+            margin: 8px 0;
+        }
+        .tier {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .smv-info {
+            font-size: 12px;
+            color: #8b949e;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>PSL Калькулятор</h1>
+    <p class="subtitle">Страховочная копия базы знаний (Обучение продолжается)</p>
+    
+    <div class="form-group">
+        <label for="face-score">Оценка лица (Face):</label>
+        <select id="face-score">
+            <option value="1">1/10 — Глубокий Sub3</option>
+            <option value="2">2/10 — Sub3</option>
+            <option value="3">3/10 — Unattractive / Sub3</option>
+            <option value="4" selected>4/10 — Low Tier Normie (LTN)</option>
+            <option value="5">5/10 — Mid Tier Normie (MTN)</option>
+            <option value="6">6/10 — High Tier Normie (HTN)</option>
+            <option value="7">7/10 — Chadlite</option>
+            <option value="8">8/10 — Chad</option>
+            <option value="9">9/10 — Giga Chad / Giga Stacy</option>
+            <option value="10">10/10 — Идеал / Предел шкалы</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="height">Рост (Height):</label>
+        <input type="number" id="height" value="180" placeholder="в см">
+    </div>
+
+    <div class="form-group">
+        <label for="physique">Телосложение (Physique):</label>
+        <select id="physique">
+            <option value="bad">Плохое (лишний вес / сильный недобор)</option>
+            <option value="average" selected>Среднее / Обычное</option>
+            <option value="good">Спортивное / Атлетичное</option>
+            <option value="elite">Элитное / Просушенное (Топ-тело)</option>
+        </select>
+    </div>
+
+    <button onclick="calculatePSL()">Рассчитать ранг</button>
+
+    <div class="result-box" id="result">
+        <div class="tier" id="result-tier">Low Tier Normie</div>
+        <div class="score" id="result-score">4 / 10</div>
+        <div class="smv-info" id="result-smv">S.M.V. (Face, Height, Physique) учтены в финальном ранге.</div>
+    </div>
+</div>
+
+<script>
+    function calculatePSL() {
+        const face = parseInt(document.getElementById('face-score').value);
+        const height = parseInt(document.getElementById('height').value);
+        const physique = document.getElementById('physique').value;
+        
+        let finalScore = face;
+        
+        if (height >= 190 && face >= 6) {
+            finalScore += 0.5;
+        } else if (height < 170) {
+            finalScore -= 0.5;
+        }
+        
+        if (physique === 'elite' && finalScore <= 8) {
+            finalScore += 0.5;
+        } else if (physique === 'bad') {
+            finalScore -= 0.5;
+        }
+
+        if (finalScore > 10) finalScore = 10;
+        if (finalScore < 1) finalScore = 1;
+        
+        finalScore = Math.round(finalScore * 10) / 10;
+
+        let tier = "";
+        if (finalScore < 3.5) {
+            tier = "Sub3";
+        } else if (finalScore >= 3.5 && finalScore < 4.5) {
+            tier = "Low Tier Normie (LTN)";
+        } else if (finalScore >= 4.5 && finalScore < 5.5) {
+            tier = "Mid Tier Normie (MTN)";
+        } else if (finalScore >= 5.5 && finalScore < 6.5) {
+            tier = "High Tier Normie (HTN)";
+        } else if (finalScore >= 6.5 && finalScore < 7.5) {
+            tier = "Chadlite";
+        } else if (finalScore >= 7.5 && finalScore < 8.5) {
+            tier = "Chad";
+        } else {
+            tier = "Giga Chad / Giga Stacy";
+        }
+
+        document.getElementById('result-tier').innerText = tier;
+        document.getElementById('result-score').innerText = finalScore + " / 10";
+        document.getElementById('result').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
